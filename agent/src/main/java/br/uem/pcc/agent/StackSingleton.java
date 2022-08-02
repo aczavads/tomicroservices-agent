@@ -12,12 +12,16 @@ import java.util.stream.Stream;
 public class StackSingleton {
 	private Map<String, List<String>> featureEntryPoints = loadFeatureEntryPoints();
 	private static StackSingleton instance = new StackSingleton();
-	private Stack<StackElement> callstack = new Stack<>();
+	private Map<String, Stack<StackElement>> callstackPerThread = new HashMap<String,Stack<StackElement>>();
 	private int deep = 0;
 	
 	public synchronized void push(Method m, Object[] arguments) {
 		//this.callstack.push(new StackElement(m, deep, arguments));
 		boolean alreadCalled = false;
+		
+		String currentThreadName = Thread.currentThread().getName();
+		Stack<StackElement> callstack = callstackPerThread.getOrDefault(currentThreadName, new Stack<StackElement>());
+		
 		for (int i = callstack.size()-1; i >= 0; i--) {
 			StackElement element = callstack.get(i);
 			
@@ -28,7 +32,7 @@ public class StackSingleton {
 			}
 		}
 		if (!alreadCalled) {
-			this.callstack.push(new StackElement(m, deep, arguments));
+			callstack.push(new StackElement(m, deep, arguments));
 		}
 	}
 	
