@@ -63,6 +63,12 @@ public class StackSingleton {
 
 	private String getFeatureName(Method method) {		
 		final String methodName = method.getDeclaringClass().getName() + "." + method.getName();
+		if (methodName.equals("com.accountfy.components.grupoeconomicoconfig.GrupoEconomicoConfigController.getByGrupo")) {
+			System.out.println(">>>>>>>>>>>>>>>>>>>> achou!!!! GrupoEconomicoConfigController.getByGrupo");
+		}
+		if (methodName.equals("com.accountfy.components.tabelao.PainelResultadoRealController.getPainelRealDF")) {
+			System.out.println(">>>>>>>>>>>>>>>>>>>> achou!!!! PainelResultadoRealController.getPainelRealDF");
+		}
 		return featureEntryPoints
 			      .entrySet()
 			      .stream()
@@ -77,8 +83,10 @@ public class StackSingleton {
 
 	private Map<String, List<String>> loadFeatureEntryPoints() {
 		HashMap<String, List<String>> featureEntryPoints = new HashMap<>();
-		featureEntryPoints.put("ManterCor", Arrays.asList("br.uem.agent_test.AppAgentTest.testarManterCor"));
-		featureEntryPoints.put("EfetuarLogin", Arrays.asList("br.uem.agent_test.AppAgentTest.testarEfetuarLogin"));
+//		featureEntryPoints.put("ManterCor", Arrays.asList("br.uem.agent_test.AppAgentTest.testarManterCor"));
+//		featureEntryPoints.put("EfetuarLogin", Arrays.asList("br.uem.agent_test.AppAgentTest.testarEfetuarLogin"));
+		featureEntryPoints.put("ObterGrupoEconomico", Arrays.asList("com.accountfy.components.grupoeconomicoconfig.GrupoEconomicoConfigController.getByGrupo"));
+		featureEntryPoints.put("DemonstrativoFinanceiro", Arrays.asList("com.accountfy.components.tabelao.PainelResultadoRealController.getPainelRealDF"));		
 		return featureEntryPoints;
 	}
 	

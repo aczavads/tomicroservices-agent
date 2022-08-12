@@ -34,13 +34,31 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/libs
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<!-- <classpathPrefix>lib/</classpathPrefix> -->
+							<classpathPrefix>libs/</classpathPrefix>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
@@ -48,6 +66,7 @@
 							<Premain-Class>br.uem.pcc.agent.ToMicroservicesAgent</Premain-Class>
 							<Can-Redefine-Classes>false</Can-Redefine-Classes>
 							<Can-Retransform-Classes>true</Can-Retransform-Classes>
+							<Class-Path>.</Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>
