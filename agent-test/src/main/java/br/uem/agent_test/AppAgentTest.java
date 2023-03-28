@@ -1,9 +1,10 @@
 package br.uem.agent_test;
 
 import br.uem.agent_test.efetuar_login.LoginController;
+import br.uem.agent_test.efetuar_login.Teste;
 import br.uem.agent_test.manter_cor.Cor;
 import br.uem.agent_test.manter_cor.CorController;
-import br.uem.pcc.agent.StackSingleton;
+//import br.uem.pcc.agent.StackSingleton;
 
 public class AppAgentTest {
 
@@ -13,13 +14,14 @@ public class AppAgentTest {
 		
 		testarEfetuarLogin();
 		
-		StackSingleton.getInstance().printStack();
+		//StackSingleton.getInstance().printStack();
 	}
 
 	public static void testarEfetuarLogin() { 
 		LoginController controller = new LoginController();
 		controller.login("fernando.felizardo","teste123");
 		controller.login("arthur.zavadski","teste123");
+		controller.testar(new Teste());
 		
 	}
 

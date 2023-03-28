@@ -18,7 +18,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy</artifactId>
 			<version>1.12.8</version>
@@ -27,6 +27,6 @@
 			<groupId>br.uem.pcc</groupId>
 			<artifactId>agent</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 </project>

@@ -14,13 +14,18 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
 
 public class StackInterceptor {
+	private static StackInterceptor instance = new StackInterceptor();
 	
 	public StackInterceptor() {
 		System.out.println(">>> StackInterceptor()");
 	}
 	
+	public static StackInterceptor getInstance() { 
+		return instance;
+	}
+	
 	@RuntimeType
-	public Object intercept(@Origin Method method, @SuperCall Callable<?> callable, @AllArguments Object[] arguments) {
+	public synchronized Object intercept(@Origin Method method, @SuperCall Callable<?> callable, @AllArguments Object[] arguments) {
 		boolean featureStarted = StackSingleton.getInstance().methodIsFeatureEntryPoint(method) || StackSingleton.getInstance().getDeep() > 0;
 		if (featureStarted) {
 			int deep = StackSingleton.getInstance().increaseDeep();

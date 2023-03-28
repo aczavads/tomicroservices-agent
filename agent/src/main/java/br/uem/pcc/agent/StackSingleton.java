@@ -1,7 +1,6 @@
 package br.uem.pcc.agent;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -12,46 +11,60 @@ import java.util.stream.Stream;
 public class StackSingleton {
 	private Map<String, List<String>> featureEntryPoints = loadFeatureEntryPoints();
 	private static StackSingleton instance = new StackSingleton();
-	private Stack<StackElement> callstack = new Stack<>();
-	private int deep = 0;
+	private Map<String, Clóvis> callstackPerThread = new HashMap<String,Clóvis>();
 	
 	public synchronized void push(Method m, Object[] arguments) {
-		//this.callstack.push(new StackElement(m, deep, arguments));
-		boolean alreadCalled = false;
-		for (int i = callstack.size()-1; i >= 0; i--) {
-			StackElement element = callstack.get(i);
-			
-			if (element.getMethod().equals(m) && element.getDeep() == deep) {
-				element.setNumberOfCalls(element.getNumberOfCalls()+1);
-				alreadCalled = true;
-				break;
-			}
-		}
-		if (!alreadCalled) {
-			this.callstack.push(new StackElement(m, deep, arguments));
-		}
+		getClóvisOfCurrentThread().push(m, arguments);
 	}
 	
-	public int increaseDeep() {
-		return ++deep;
+	public synchronized int increaseDeep() {
+		return getClóvisOfCurrentThread().increaseDeep();
 	}
-	public int decreaseDeep() {
-		return --deep;
+	public synchronized int decreaseDeep() {
+		return getClóvisOfCurrentThread().decreaseDeep();
 	}
 	
+	private synchronized Clóvis getClóvisOfCurrentThread() {
+		String currentThreadName = Thread.currentThread().getName();
+		Clóvis clóvis = callstackPerThread.getOrDefault(currentThreadName, new Clóvis());
+		callstackPerThread.put(currentThreadName, clóvis);
+		return clóvis;
+	}
+	private synchronized void clearClóvisOfCurrentThread() {
+		String currentThreadName = Thread.currentThread().getName();
+		callstackPerThread.remove(currentThreadName);
+	}
 	public synchronized void printStack() {
+		printStack(true);
+	}
+	
+	public synchronized void printStack(boolean printEmptyStack) {
+		Stack<StackElement> callstack = getClóvisOfCurrentThread().getCallstack();
+		
 		StackElement[] elements = callstack.toArray(new StackElement[] {});
+		if (!printEmptyStack && elements.length == 0) {
+			return;
+		}
+		System.out.println(">>>>>>>>>>>>>>>>>> printStack!!! " + Thread.currentThread().getName());
 		System.out.println(elements.length);
 		Stream.of(elements).forEach(e -> {
 			if (e.getDeep() == 1 && methodIsFeatureEntryPoint(e.getMethod())) {
 				printFeature(e.getMethod());
 			}
-			System.out.println("Class:" + e.getMethod().getDeclaringClass().getName() + "#Method:" +  e.getMethod().getName() + "#SizeOf:" + e.getSizeOf() + "#Deep=" + e.getDeep() + "#numberOfCalls=" + e.getNumberOfCalls()+"#Thread:main");		
+			System.out.println("Class:" + e.getMethod().getDeclaringClass().getName() + 
+					"#Method:" +  e.getMethod().getName() + 
+					"#SizeOf:" + e.getSizeOf() + 
+					"#Deep=" + e.getDeep() + 
+					"#numberOfCalls=" + e.getNumberOfCalls()+
+					"#Thread:" + Thread.currentThread().getName());		
 		});
 	}
+	public synchronized void clearStack() {
+		clearClóvisOfCurrentThread();
+	}
 
-	public int getDeep() {
-		return deep;
+	public synchronized int getDeep() {
+		return getClóvisOfCurrentThread().getDeep();
 	}
 	
 	public static StackSingleton getInstance() {
@@ -78,8 +91,11 @@ public class StackSingleton {
 
 	private Map<String, List<String>> loadFeatureEntryPoints() {
 		HashMap<String, List<String>> featureEntryPoints = new HashMap<>();
-		featureEntryPoints.put("ManterCor", Arrays.asList("br.uem.agent_test.AppAgentTest.testarManterCor"));
-		featureEntryPoints.put("EfetuarLogin", Arrays.asList("br.uem.agent_test.AppAgentTest.testarEfetuarLogin"));
+//		featureEntryPoints.put("ManterCor", Arrays.asList("br.uem.agent_test.AppAgentTest.testarManterCor"));
+//		featureEntryPoints.put("EfetuarLogin", Arrays.asList("br.uem.agent_test.AppAgentTest.testarEfetuarLogin"));
+//		featureEntryPoints.put("ObterGrupoEconomico", Arrays.asList("com.accountfy.components.grupoeconomicoconfig.GrupoEconomicoConfigController.getByGrupo"));
+//		featureEntryPoints.put("DemonstrativoFinanceiro", Arrays.asList("com.accountfy.components.tabelao.PainelResultadoRealController.getPainelRealDF"));		
+//		featureEntryPoints.put("ManterUsuario", Arrays.asList("com.accountfy.data.extractor.controller.UserController.getUsers"));
 		return featureEntryPoints;
 	}
 	
