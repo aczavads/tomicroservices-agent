@@ -58,7 +58,7 @@ public class ToMicroservicesInterceptor {
 
 	private Map<String, List<String>> loadFeatureEntryPoints() {
 		HashMap<String, List<String>> featureEntryPoints = new HashMap<>();
-		featureEntryPoints.put("ManterCor", Arrays.asList("br.uem.agent_test.AppAgentTest.main"));
+		featureEntryPoints.put("ManterUsuario", Arrays.asList("com.accountfy.data.extractor.controller.UserController.getUsers"));
 		return featureEntryPoints;
 	}
 }

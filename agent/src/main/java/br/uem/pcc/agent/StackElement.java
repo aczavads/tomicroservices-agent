@@ -17,7 +17,8 @@ public class StackElement {
 		this.method = method;
 		this.deep = deep;
 		this.arguments = arguments;
-		this.sizeOf = Stream.of(arguments).map(SizeOf::sizeOf).reduce(0L, (v, acc) -> acc+v);
+		//this.sizeOf = Stream.of(arguments).map(SizeOf::sizeOf).reduce(0L, (v, acc) -> acc+v);
+		this.sizeOf = 0L;
 	}
 	
 	
