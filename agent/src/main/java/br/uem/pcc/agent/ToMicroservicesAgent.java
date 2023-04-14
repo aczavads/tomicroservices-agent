@@ -12,12 +12,13 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.ClassFileLocator;
 import net.bytebuddy.dynamic.loading.ClassInjector;
+import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 public class ToMicroservicesAgent {
 	
 	public static void premain(String arg, Instrumentation inst) throws Exception {
-		System.out.println(">>>>>>>>> ToMicroservicesAgent loading...v26");
+		System.out.println(">>>>>>>>> ToMicroservicesAgent loading...v30");
 //		System.out.println(">>>>>>>>>>>>>>>>>> loading agent jar file...");
 //		inst.appendToBootstrapClassLoaderSearch(new JarFile("/home/arthur/Documents/doutorado/workspace-estudos/tomicroservices-agent/agent/target/deps.jar"));			
 //		System.out.println(">>>>>>>>>>>>>>>>>> agent jar file loaded!   xxx");
@@ -42,7 +43,8 @@ public class ToMicroservicesAgent {
 				.with(AgentBuilder.TypeStrategy.Default.REDEFINE)		
 		        //.type(ElementMatchers.not(ElementMatchers.nameStartsWith("br.uem")).and(ElementMatchers.nameStartsWith("br").and(ElementMatchers.not(ElementMatchers.nameContains("$")))))
 		        //.type(ElementMatchers.nameStartsWith("br.uem.agent_test"))
-		        .type(ElementMatchers.nameStartsWith("br.com.webpublico"))
+		        //.type(ElementMatchers.nameStartsWith("br.com.webpublico"))
+		        .type(ElementMatchers.nameStartsWith("org.mybatis.jpetstore").or(ElementMatchers.hasSuperType(ElementMatchers.nameStartsWith("org.mybatis.jpetstore"))))
 				.transform((builder, type, classLoader, module) -> {
 						//System.out.println(">>> Instrumentando " + type.getActualName());
 						return builder

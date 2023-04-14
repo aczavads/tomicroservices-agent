@@ -1,11 +1,17 @@
 package br.uem.pcc.agent;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class StackSingleton {
@@ -35,30 +41,69 @@ public class StackSingleton {
 		callstackPerThread.remove(currentThreadName);
 	}
 	public synchronized void printStack() {
-		printStack(true);
+		printStack(0);
 	}
 	
-	public synchronized void printStack(boolean printEmptyStack) {
+	public synchronized void printStack(int minSizeToPrint) {		
 		Stack<StackElement> callstack = getClóvisOfCurrentThread().getCallstack();
 		
 		StackElement[] elements = callstack.toArray(new StackElement[] {});
-		if (!printEmptyStack && elements.length == 0) {
+		if (elements.length < minSizeToPrint) {
 			return;
 		}
 		System.out.println(">>>>>>>>>>>>>>>>>> printStack!!! " + Thread.currentThread().getName());
 		System.out.println(elements.length);
-		Stream.of(elements).forEach(e -> {
-			if (e.getDeep() == 1 && methodIsFeatureEntryPoint(e.getMethod())) {
-				printFeature(e.getMethod());
-			}
-			System.out.println("Class:" + e.getMethod().getDeclaringClass().getName() + 
-					"#Method:" +  e.getMethod().getName() + 
-					"#SizeOf:" + e.getSizeOf() + 
-					"#Deep=" + e.getDeep() + 
-					"#numberOfCalls=" + e.getNumberOfCalls()+
-					"#Thread:" + Thread.currentThread().getName());		
-		});
+		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/tmp/to-microservices-log.txt", true))) {			
+			printFeatureLine(elements[0], logFileWriter);
+			Stream.of(elements).forEach(e -> {
+				if (e.getDeep() == 1 && methodIsFeatureEntryPoint(e.getMethod())) {
+					printFeature(e.getMethod());
+				}
+				String declaringClassName = e.getMethod().getDeclaringClass().getName();
+				declaringClassName = getDeclaringClassName(e);
+
+				String logLine = "Class:" + declaringClassName + 
+						"#Method:" +  e.getMethod().getName() + 
+						"#SizeOf:" + e.getSizeOf() + 
+						"#Deep=" + e.getDeep() + 
+						"#numberOfCalls=" + e.getNumberOfCalls()+
+						"#Thread:" + Thread.currentThread().getName();
+				logFileWriter.println(logLine);
+			});
+			logFileWriter.flush();
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 	}
+
+	private String getDeclaringClassName(StackElement e) {
+		String declaringClassName = e.getMethod().getDeclaringClass().getName();
+		boolean isProxy = e.getMethod().getDeclaringClass().getSimpleName().startsWith("$Proxy");
+		if (isProxy) {
+			Class<?>[] interfaces = e.getMethod().getDeclaringClass().getInterfaces();
+			declaringClassName = interfaces[0].getName();
+		}
+		return declaringClassName;
+	}
+	private void printFeatureLine(StackElement stackElement, PrintWriter logFileWriter) {
+		//SF:SF:#ManterAluno<teste.gerado.ManterAluno.executar>
+		String declaringClassName = getDeclaringClassName(stackElement);		
+		String featureLine = "SF:SF:#" + extractFeatureNameFromClassName(declaringClassName) + "<" + declaringClassName+ "." + stackElement.method.getName() + ">";
+		logFileWriter.println(featureLine);
+		
+	}
+	
+	public static String extractFeatureNameFromClassName(String input) {
+        Pattern pattern = Pattern.compile("(?<=\\.)[A-Z][a-z|\\d]+");
+        Matcher matcher = pattern.matcher(input);
+        
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return "regex-de-feature-falhou"; // ou lance uma exceção, caso a palavra não seja encontrada
+        }
+    }
+
 	public synchronized void clearStack() {
 		clearClóvisOfCurrentThread();
 	}
