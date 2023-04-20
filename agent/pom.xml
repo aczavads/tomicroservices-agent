@@ -23,6 +23,13 @@
 			<version>1.18.22</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.13.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
@@ -33,74 +40,74 @@
 	<build>
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-assembly-plugin</artifactId>
-			    <executions>
-			        <execution>
-			            <phase>package</phase>
-			            <goals>
-			                <goal>single</goal>
-			            </goals>
-			            <configuration>
-			                <archive>
-        						<index>true</index>
-                				<manifest>
-                    				<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                    				<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                				</manifest>			                
-			                	<manifestEntries>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<index>true</index>
+								<manifest>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+								</manifest>
+								<manifestEntries>
 									<Premain-Class>br.uem.pcc.agent.ToMicroservicesAgent</Premain-Class>
 									<Can-Redefine-Classes>true</Can-Redefine-Classes>
 									<Can-Retransform-Classes>true</Can-Retransform-Classes>
-			                	</manifestEntries>
-			                </archive>
-			                <descriptorRefs>
-			                    <descriptorRef>jar-with-dependencies</descriptorRef>
-			                </descriptorRefs>
-			            </configuration>
-			        </execution>
-			    </executions>
-			</plugin>		
-		
-<!--  			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-dependency-plugin</artifactId> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>copy-dependencies</id> -->
-<!-- 						<phase>prepare-package</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>copy-dependencies</goal> -->
-<!-- 						</goals> -->
-<!-- 						<configuration> -->
-<!-- 							<outputDirectory> -->
-<!-- 								${project.build.directory}/libs -->
-<!-- 							</outputDirectory> -->
-<!-- 						</configuration> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-jar-plugin</artifactId> -->
-<!-- 				<version>2.4</version> -->
-<!-- 				<configuration> -->
-<!-- 					<archive> -->
-<!-- 						<manifest> -->
-<!-- 							<addClasspath>true</addClasspath> -->
-<!-- 							<classpathPrefix>libs/</classpathPrefix> -->
-<!-- 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries> -->
-<!-- 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries> -->
-<!-- 						</manifest> -->
-<!-- 						<manifestEntries> -->
-<!-- 							<Premain-Class>br.uem.pcc.agent.ToMicroservicesAgent</Premain-Class> -->
-<!-- 							<Can-Redefine-Classes>false</Can-Redefine-Classes> -->
-<!-- 							<Can-Retransform-Classes>true</Can-Retransform-Classes> -->
-<!-- 							<Class-Path>.</Class-Path> -->
-<!-- 						</manifestEntries> -->
-<!-- 					</archive> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-		</plugins> 
+								</manifestEntries>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-dependency-plugin</artifactId> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>copy-dependencies</id> -->
+			<!-- <phase>prepare-package</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>copy-dependencies</goal> -->
+			<!-- </goals> -->
+			<!-- <configuration> -->
+			<!-- <outputDirectory> -->
+			<!-- ${project.build.directory}/libs -->
+			<!-- </outputDirectory> -->
+			<!-- </configuration> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-jar-plugin</artifactId> -->
+			<!-- <version>2.4</version> -->
+			<!-- <configuration> -->
+			<!-- <archive> -->
+			<!-- <manifest> -->
+			<!-- <addClasspath>true</addClasspath> -->
+			<!-- <classpathPrefix>libs/</classpathPrefix> -->
+			<!-- <addDefaultImplementationEntries>true</addDefaultImplementationEntries> -->
+			<!-- <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries> -->
+			<!-- </manifest> -->
+			<!-- <manifestEntries> -->
+			<!-- <Premain-Class>br.uem.pcc.agent.ToMicroservicesAgent</Premain-Class> -->
+			<!-- <Can-Redefine-Classes>false</Can-Redefine-Classes> -->
+			<!-- <Can-Retransform-Classes>true</Can-Retransform-Classes> -->
+			<!-- <Class-Path>.</Class-Path> -->
+			<!-- </manifestEntries> -->
+			<!-- </archive> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
+		</plugins>
 	</build>
 </project>

@@ -53,7 +53,8 @@ public class StackSingleton {
 		}
 		System.out.println(">>>>>>>>>>>>>>>>>> printStack!!! " + Thread.currentThread().getName());
 		System.out.println(elements.length);
-		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/tmp/to-microservices-log.txt", true))) {			
+//		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/tmp/to-microservices-log.txt", true))) {			
+		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("C:/Users/snake/Documents/Mestrado/JPetStore/to-microservices-log.txt", true))) {			
 			printFeatureLine(elements[0], logFileWriter);
 			Stream.of(elements).forEach(e -> {
 				if (e.getDeep() == 1 && methodIsFeatureEntryPoint(e.getMethod())) {
@@ -65,9 +66,10 @@ public class StackSingleton {
 				String logLine = "Class:" + declaringClassName + 
 						"#Method:" +  e.getMethod().getName() + 
 						"#SizeOf:" + e.getSizeOf() + 
-						"#Deep=" + e.getDeep() + 
-						"#numberOfCalls=" + e.getNumberOfCalls()+
-						"#Thread:" + Thread.currentThread().getName();
+						"#Deep:" + e.getDeep() + 
+						//"#numberOfCalls:" + e.getNumberOfCalls()+
+						//"#Thread:" + Thread.currentThread().getName();
+						"#Thread:main";
 				logFileWriter.println(logLine);
 			});
 			logFileWriter.flush();
