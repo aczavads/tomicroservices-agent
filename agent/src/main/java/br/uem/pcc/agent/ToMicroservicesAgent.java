@@ -12,21 +12,18 @@ import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.ClassFileLocator;
 import net.bytebuddy.dynamic.loading.ClassInjector;
+import net.bytebuddy.implementation.SuperMethodCall;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 public class ToMicroservicesAgent {
 	
 	public static void premain(String arg, Instrumentation inst) throws Exception {
-		System.out.println(">>>>>>>>> ToMicroservicesAgent loading...v30");
-//		System.out.println(">>>>>>>>>>>>>>>>>> loading agent jar file...");
-//		inst.appendToBootstrapClassLoaderSearch(new JarFile("/home/arthur/Documents/doutorado/workspace-estudos/tomicroservices-agent/agent/target/deps.jar"));			
-//		System.out.println(">>>>>>>>>>>>>>>>>> agent jar file loaded!   xxx");
+		System.out.println(">>>>>>>>> ToMicroservicesAgent loading...v36");
 			
         File temp = Files.createTempDirectory("tmpzzzz").toFile();        
         
         Map<TypeDescription.ForLoadedType, byte[]> toInject = new HashMap<>();
-//        toInject.put(new TypeDescription.ForLoadedType(ToMicroservicesAgent.class), ClassFileLocator.ForClassLoader.read(ToMicroservicesAgent.class));
         toInject.put(new TypeDescription.ForLoadedType(StackSingleton.class), ClassFileLocator.ForClassLoader.read(StackSingleton.class));
         toInject.put(new TypeDescription.ForLoadedType(Clóvis.class), ClassFileLocator.ForClassLoader.read(Clóvis.class));
         toInject.put(new TypeDescription.ForLoadedType(StackElement.class), ClassFileLocator.ForClassLoader.read(StackElement.class));
@@ -35,21 +32,16 @@ public class ToMicroservicesAgent {
         ClassInjector.UsingInstrumentation.of(temp, ClassInjector.UsingInstrumentation.Target.BOOTSTRAP, inst).inject(toInject);
          
 		new AgentBuilder.Default()		      
-//		        .with(AgentBuilder.Listener.StreamWriting.toSystemOut())
 		        .with(new AgentBuilder.InjectionStrategy.UsingInstrumentation(inst, temp))
-		         .disableClassFormatChanges()
-				.with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
-				.with(AgentBuilder.InitializationStrategy.NoOp.INSTANCE)
-				.with(AgentBuilder.TypeStrategy.Default.REDEFINE)		
-		        //.type(ElementMatchers.not(ElementMatchers.nameStartsWith("br.uem")).and(ElementMatchers.nameStartsWith("br").and(ElementMatchers.not(ElementMatchers.nameContains("$")))))
-		        //.type(ElementMatchers.nameStartsWith("br.uem.agent_test"))
-		        //.type(ElementMatchers.nameStartsWith("br.com.webpublico"))
-		        .type(ElementMatchers.nameStartsWith("org.mybatis.jpetstore").or(ElementMatchers.hasSuperType(ElementMatchers.nameStartsWith("org.mybatis.jpetstore"))))
+				.with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
+		        .type(ElementMatchers.not(ElementMatchers.isAbstract().or(ElementMatchers.nameContains("$$")) ).and((ElementMatchers.nameStartsWith("br.com.webpublico").or(ElementMatchers.hasSuperType(ElementMatchers.nameStartsWith("br.com.webpublico"))))))
 				.transform((builder, type, classLoader, module) -> {
-						//System.out.println(">>> Instrumentando " + type.getActualName());
-						return builder
-							.visit(Advice.to(StackAdvice.class).on(ElementMatchers.isMethod()));
-						})			
+						return builder.method(ElementMatchers.isMethod()).intercept(Advice.to(StackAdvice.class));
+				 })			
+//				.transform((builder, type, classLoader, module) -> {
+//					return builder
+//						.visit(Advice.to(StackAdvice.class).on(ElementMatchers.isMethod()));
+//					})	
 				.installOn(inst);		
 	}
 }

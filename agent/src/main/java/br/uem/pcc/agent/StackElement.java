@@ -14,13 +14,15 @@ public class StackElement {
 	public int deep;
 	public int numberOfCalls = 1;
 	public Long sizeOf = 0L;
+	private Object originObject;
 	
-	public StackElement(Method method, int deep, Object[] arguments) {
+	public StackElement(Object originObject, Method method, int deep, Object[] arguments) {
+		this.originObject = originObject;
 		this.method = method;
 		this.deep = deep;
 		this.arguments = arguments;
 		//this.sizeOf = Stream.of(arguments).map(SizeOf::sizeOf).reduce(0L, (v, acc) -> acc+v);
-		this.sizeOf = calcSizeOf(arguments);
+		//this.sizeOf = calcSizeOf(arguments);
 	}
 
 	private Long calcSizeOf(Object[] arguments) {

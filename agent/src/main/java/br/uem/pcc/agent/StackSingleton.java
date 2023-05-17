@@ -19,8 +19,8 @@ public class StackSingleton {
 	private static StackSingleton instance = new StackSingleton();
 	private Map<String, Clóvis> callstackPerThread = new HashMap<String,Clóvis>();
 	
-	public synchronized void push(Method m, Object[] arguments) {
-		getClóvisOfCurrentThread().push(m, arguments);
+	public synchronized void push(Object originObject, Method m, Object[] arguments) {
+		getClóvisOfCurrentThread().push(originObject, m, arguments);
 	}
 	
 	public synchronized int increaseDeep() {
@@ -53,8 +53,8 @@ public class StackSingleton {
 		}
 		System.out.println(">>>>>>>>>>>>>>>>>> printStack!!! " + Thread.currentThread().getName());
 		System.out.println(elements.length);
-//		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/tmp/to-microservices-log.txt", true))) {			
-		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("C:/Users/snake/Documents/Mestrado/JPetStore/to-microservices-log.txt", true))) {			
+		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/tmp/to-microservices-log.txt", true))) {			
+//		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("C:\\mestrado\\to-microservices-log.txt", true))) {			
 			printFeatureLine(elements[0], logFileWriter);
 			Stream.of(elements).forEach(e -> {
 				if (e.getDeep() == 1 && methodIsFeatureEntryPoint(e.getMethod())) {
@@ -65,7 +65,8 @@ public class StackSingleton {
 
 				String logLine = "Class:" + declaringClassName + 
 						"#Method:" +  e.getMethod().getName() + 
-						"#SizeOf:" + e.getSizeOf() + 
+						//"#SizeOf:" + e.getSizeOf() + 
+						"#SizeOf:" + e.getNumberOfCalls() + 
 						"#Deep:" + e.getDeep() + 
 						//"#numberOfCalls:" + e.getNumberOfCalls()+
 						//"#Thread:" + Thread.currentThread().getName();
@@ -79,10 +80,11 @@ public class StackSingleton {
 	}
 
 	private String getDeclaringClassName(StackElement e) {
-		String declaringClassName = e.getMethod().getDeclaringClass().getName();
-		boolean isProxy = e.getMethod().getDeclaringClass().getSimpleName().startsWith("$Proxy");
+		//String declaringClassName = e.getMethod().getDeclaringClass().getName();
+		String declaringClassName = e.getOriginObject().getClass().getName();
+		boolean isProxy = e.getOriginObject().getClass().getSimpleName().startsWith("$Proxy");
 		if (isProxy) {
-			Class<?>[] interfaces = e.getMethod().getDeclaringClass().getInterfaces();
+			Class<?>[] interfaces = e.getOriginObject().getClass().getInterfaces();
 			declaringClassName = interfaces[0].getName();
 		}
 		return declaringClassName;

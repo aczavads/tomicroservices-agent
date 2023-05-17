@@ -29,7 +29,7 @@ public class StackInterceptor {
 		boolean featureStarted = StackSingleton.getInstance().methodIsFeatureEntryPoint(method) || StackSingleton.getInstance().getDeep() > 0;
 		if (featureStarted) {
 			int deep = StackSingleton.getInstance().increaseDeep();
-			StackSingleton.getInstance().push(method, arguments);
+			StackSingleton.getInstance().push(null, method, arguments);
 			
 			System.out.println(">>> " + method.getDeclaringClass().getName() + "." +  method.getName());
 		}

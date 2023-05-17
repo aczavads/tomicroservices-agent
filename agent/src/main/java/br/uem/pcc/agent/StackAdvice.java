@@ -3,6 +3,7 @@ package br.uem.pcc.agent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ public class StackAdvice {
 		System.out.println(">>>> new StackAdvice()");
 	}
 	
-	@Advice.OnMethodEnter(inline = true)
+	@Advice.OnMethodEnter(inline = false)
 	public static void onEnter(@Advice.Origin Method method,  @Advice.This(typing = Typing.DYNAMIC) Object originObject, @Advice.AllArguments Object[] arguments) {
 //		//System.out.println(">>> before ...");		
 ////		if (isGeneratedAtRuntime(method.getDeclaringClass())) {
@@ -50,28 +51,30 @@ public class StackAdvice {
 //			}
 //			int deep = StackSingleton.getInstance().increaseDeep();
 //			StackSingleton.getInstance().push(method, arguments);		
-//		}
-		String originClassName = originObject.getClass().getName();
-		try {
-			boolean isSpringClass = originObject.getClass().getSimpleName().contains("BySpring");
-			if (isSpringClass) {
-				return;
-			}
-			boolean isProxy = originObject.getClass().getSimpleName().startsWith("$Proxy");
-			if (isProxy) {
-				Class<?>[] interfaces = originObject.getClass().getInterfaces();
-				if (interfaces.length == 0) {
-					return;
-				}
-				originClassName = interfaces[0].getName();
-				//System.out.println(">>>>> " + method.toString());
-				//method = interfaces[0].getDeclaredMethod(method.getName(), method.getParameterTypes());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		}			
+//		String originClassName = originObject.getClass().getName();
+//		try {
+//			boolean isSpringClass = originObject.getClass().getSimpleName().contains("BySpring");
+////			if (isSpringClass) {
+////				System.out.println(">>>>>> " + originClassName + "." + method.getName() + "Class: " +  originObject.getClass().getName());
+////				return;
+////			}
+//			boolean isProxy = originObject.getClass().getSimpleName().startsWith("$Proxy");
+//			if (isProxy) {
+//				Class<?>[] interfaces = originObject.getClass().getInterfaces();
+//				if (interfaces.length == 0) {
+//					return;
+//				}
+//				originClassName = interfaces[0].getName();
+//				//System.out.println(">>>>> " + method.toString());
+//				//method = interfaces[0].getDeclaredMethod(method.getName(), method.getParameterTypes());
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}		
+//		System.out.println(">>>>>> " + originClassName + "." + method.getName() + "Class: " +  method.getDeclaringClass().getName());
 		int deep = StackSingleton.getInstance().increaseDeep(); 
-		StackSingleton.getInstance().push(method, arguments);		
+		StackSingleton.getInstance().push(originObject, method, arguments);		
 		//System.out.println("----> " + originClassName + "::" + method.getName() + " ==> deep=" + deep);
 	}
 	
@@ -88,7 +91,7 @@ public class StackAdvice {
 		return clazz.getName().lastIndexOf('$') >= 0;
 	}
 
-	@Advice.OnMethodExit(inline = true)
+	@Advice.OnMethodExit(inline = false)
 	public static void onExit(@Advice.Origin Method method, @Advice.This(typing = Typing.DYNAMIC) Object originObject,  @Advice.AllArguments Object[] arguments) {
 //		//System.out.println("<<< after ...");
 //		if (isGeneratedAtRuntime(method.getDeclaringClass())) {
@@ -105,23 +108,23 @@ public class StackAdvice {
 //			StackSingleton.getInstance().printStack(false);
 //			StackSingleton.getInstance().clearStack();
 //		}
-		String originClassName = originObject.getClass().getName();
-		try {
-			boolean isSpringClass = originObject.getClass().getSimpleName().contains("BySpring");
-			if (isSpringClass) {
-				return;
-			}
-			boolean isProxy = originObject.getClass().getSimpleName().startsWith("$Proxy");
-			if (isProxy) {
-				Class<?>[] interfaces = originObject.getClass().getInterfaces();
-				if (interfaces.length == 0) {
-					return;
-				}
-				originClassName = interfaces[0].getName();
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+//		String originClassName = originObject.getClass().getName();
+//		try {
+//			boolean isSpringClass = originObject.getClass().getSimpleName().contains("BySpring");
+//			if (isSpringClass) {
+//				return;
+//			}
+//			boolean isProxy = originObject.getClass().getSimpleName().startsWith("$Proxy");
+//			if (isProxy) {
+//				Class<?>[] interfaces = originObject.getClass().getInterfaces();
+//				if (interfaces.length == 0) {
+//					return;
+//				}
+//				originClassName = interfaces[0].getName();
+//			}
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}
 		StackSingleton.getInstance().decreaseDeep(); 
 		if (StackSingleton.getInstance().getDeep() == 0) {
 			StackSingleton.getInstance().printStack(2);

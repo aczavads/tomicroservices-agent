@@ -11,7 +11,7 @@ public class Clóvis {
 		return callstack;
 	}
 	
-	public synchronized void push(Method m, Object[] arguments) {
+	public synchronized void push(Object originObject, Method m, Object[] arguments) {
 		boolean alreadCalled = false;
 						
 		for (int i = callstack.size()-1; i >= 0; i--) {
@@ -24,7 +24,7 @@ public class Clóvis {
 			}
 		}
 		if (!alreadCalled) {
-			callstack.push(new StackElement(m, deep, arguments));
+			callstack.push(new StackElement(originObject, m, deep, arguments));
 		}
 	}
 	
