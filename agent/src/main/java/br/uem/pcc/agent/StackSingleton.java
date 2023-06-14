@@ -26,8 +26,8 @@ public class StackSingleton {
 	public synchronized int increaseDeep() {
 		return getClóvisOfCurrentThread().increaseDeep();
 	}
-	public synchronized int decreaseDeep() {
-		return getClóvisOfCurrentThread().decreaseDeep();
+	public synchronized int decreaseDeep(Method m) {
+		return getClóvisOfCurrentThread().decreaseDeep(m);
 	}
 	
 	private synchronized Clóvis getClóvisOfCurrentThread() {

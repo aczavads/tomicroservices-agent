@@ -2,6 +2,7 @@ package br.uem.pcc.agent;
 
 import java.lang.reflect.Method;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class Clóvis {
 	private Stack<StackElement> callstack = new Stack<>();
@@ -33,8 +34,11 @@ public class Clóvis {
 		return ++deep;
 	}
 
-	public int decreaseDeep() {
-		return --deep;
+	public int decreaseDeep(Method m) {
+		if (callstack.stream().map(se -> se.getMethod()).collect(Collectors.toList()).contains(m)) {
+			return --deep;			
+		}
+		return deep;
 	}
 
 	public int getDeep() {

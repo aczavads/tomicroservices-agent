@@ -15,7 +15,7 @@ public class StackAdvice {
 		System.out.println(">>>> new StackAdvice()");
 	}
 	
-	@Advice.OnMethodEnter(inline = false)
+	@Advice.OnMethodEnter(inline = true)
 	public static void onEnter(@Advice.Origin Method method,  @Advice.This(typing = Typing.DYNAMIC) Object originObject, @Advice.AllArguments Object[] arguments) {
 //		//System.out.println(">>> before ...");		
 ////		if (isGeneratedAtRuntime(method.getDeclaringClass())) {
@@ -73,9 +73,20 @@ public class StackAdvice {
 //			e.printStackTrace();
 //		}		
 //		System.out.println(">>>>>> " + originClassName + "." + method.getName() + "Class: " +  method.getDeclaringClass().getName());
-		int deep = StackSingleton.getInstance().increaseDeep(); 
-		StackSingleton.getInstance().push(originObject, method, arguments);		
-		//System.out.println("----> " + originClassName + "::" + method.getName() + " ==> deep=" + deep);
+		boolean featureStarted = StackSingleton.getInstance().getDeep() > 0 || (
+					StackSingleton.getInstance().getDeep() == 0 && (
+							method.getDeclaringClass().getName().contains("controller") ||
+							method.getDeclaringClass().getName().contains("Controller") ||
+							method.getDeclaringClass().getName().contains("controler") ||
+							method.getDeclaringClass().getName().contains("Controler") ||
+							method.getDeclaringClass().getName().contains("controlador") ||
+							method.getDeclaringClass().getName().contains("Controlador") 
+					)
+				);
+		if (featureStarted) {
+			int deep = StackSingleton.getInstance().increaseDeep(); 
+			StackSingleton.getInstance().push(originObject, method, arguments);		
+		}
 	}
 	
 	
@@ -125,11 +136,10 @@ public class StackAdvice {
 //		} catch (Exception e) {
 //			throw new RuntimeException(e);
 //		}
-		StackSingleton.getInstance().decreaseDeep(); 
+		StackSingleton.getInstance().decreaseDeep(method); 
 		if (StackSingleton.getInstance().getDeep() == 0) {
 			StackSingleton.getInstance().printStack(2);
 			StackSingleton.getInstance().clearStack();
 		}
 	}
-
 }

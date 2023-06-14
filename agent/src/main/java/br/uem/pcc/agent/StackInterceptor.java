@@ -41,7 +41,7 @@ public class StackInterceptor {
 			return null;
 		} finally {
 			if (featureStarted) {
-				StackSingleton.getInstance().decreaseDeep();
+				StackSingleton.getInstance().decreaseDeep(null);
 			}
 		}
 	}
