@@ -53,7 +53,7 @@ public class StackSingleton {
 		}
 		System.out.println(">>>>>>>>>>>>>>>>>> printStack!!! " + Thread.currentThread().getName());
 		System.out.println(elements.length);
-		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/tmp/to-microservices-log.txt", true))) {			
+		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/home/arthur/to-microservices-log-definitivo.txt", true))) {			
 //		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("C:\\mestrado\\to-microservices-log.txt", true))) {			
 			printFeatureLine(elements[0], logFileWriter);
 			Stream.of(elements).forEach(e -> {
@@ -98,14 +98,16 @@ public class StackSingleton {
 	}
 	
 	public static String extractFeatureNameFromClassName(String input) {
-        Pattern pattern = Pattern.compile("(?<=\\.)[A-Z][a-z|\\d]+");
-        Matcher matcher = pattern.matcher(input);
-        
-        if (matcher.find()) {
-            return matcher.group();
-        } else {
-            return "regex-de-feature-falhou"; // ou lance uma exceção, caso a palavra não seja encontrada
-        }
+		int startPosition = input.lastIndexOf('.');
+		return input.substring(startPosition+1	, input.length()).replace("Controller", "").replace("Controlador", "").replace("Controler", "");
+//        Pattern pattern = Pattern.compile("(?<=\\.)[A-Z][a-z|\\d]+");
+//        Matcher matcher = pattern.matcher(input);
+//        
+//        if (matcher.find()) {
+//            return matcher.group();
+//        } else {
+//            return "regex-de-feature-falhou"; // ou lance uma exceção, caso a palavra não seja encontrada
+//        }
     }
 
 	public synchronized void clearStack() {
