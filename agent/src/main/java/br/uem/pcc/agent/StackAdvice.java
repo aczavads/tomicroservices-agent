@@ -15,7 +15,7 @@ public class StackAdvice {
 		System.out.println(">>>> new StackAdvice()");
 	}
 	
-	@Advice.OnMethodEnter(inline = true)
+	@Advice.OnMethodEnter(inline = false)
 	public static void onEnter(@Advice.Origin Method method,  @Advice.This(typing = Typing.DYNAMIC) Object originObject, @Advice.AllArguments Object[] arguments) {
 //		//System.out.println(">>> before ...");		
 ////		if (isGeneratedAtRuntime(method.getDeclaringClass())) {
@@ -72,7 +72,7 @@ public class StackAdvice {
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}		
-//		System.out.println(">>>>>> " + originClassName + "." + method.getName() + "Class: " +  method.getDeclaringClass().getName());
+//		System.out.println(">>>>>> " + method.getName() + "Class: " +  method.getDeclaringClass().getName());
 		boolean featureStarted = StackSingleton.getInstance().getDeep() > 0 || (
 					StackSingleton.getInstance().getDeep() == 0 && (
 							method.getDeclaringClass().getName().contains("controller") ||

@@ -53,7 +53,7 @@ public class StackSingleton {
 		}
 		System.out.println(">>>>>>>>>>>>>>>>>> printStack!!! " + Thread.currentThread().getName());
 		System.out.println(elements.length);
-		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/home/arthur/to-microservices-log-definitivo.txt", true))) {			
+		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("/home/arthur/santini-log-definitivo.txt", true))) {			
 //		try (PrintWriter logFileWriter = new PrintWriter(new FileWriter("C:\\mestrado\\to-microservices-log.txt", true))) {			
 			printFeatureLine(elements[0], logFileWriter);
 			Stream.of(elements).forEach(e -> {
